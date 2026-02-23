@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Uploads - Step by Step</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .step {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background: #f9f9f9;
+        }
+        .btn {
+            background: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .btn:hover {
+            background: #0056b3;
+        }
+        .btn-danger {
+            background: #dc3545;
+        }
+        .btn-danger:hover {
+            background: #c82333;
+        }
+        .data-display {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .success {
+            color: #155724;
+            background: #d4edda;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .error {
+            color: #721c24;
+            background: #f8d7da;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Debug Uploads - Step by Step</h1>
+        <p>This page will help us identify exactly where the double uploads are coming from.</p>
+        
+        <div class="step">
+            <h3>🔐 Quick Login</h3>
+            <button class="btn" onclick="goToLogin()">Go to Login Page</button>
+            <button class="btn" onclick="goToDashboard()">Go to Dashboard</button>
+            <div id="quickNav"></div>
+        </div>
+        
+        <div class="step">
+            <h3>Step 1: Check Session</h3>
+            <button class="btn" onclick="checkSession()">Check Session</button>
+            <div id="sessionResult"></div>
+        </div>
+        
+        <div class="step">
+            <h3>Step 2: Fetch Raw Data from API</h3>
+            <button class="btn" onclick="fetchRawData()">Fetch Raw API Data</button>
+            <div id="rawDataResult"></div>
+        </div>
+        
+        <div class="step">
+            <h3>Step 3: Analyze Data for Duplicates</h3>
+            <button class="btn" onclick="analyzeDuplicates()">Analyze Duplicates</button>
+            <div id="duplicateAnalysis"></div>
+        </div>
+        
+        <div class="step">
+            <h3>Step 4: Test Dashboard Display</h3>
+            <button class="btn" onclick="testDashboardDisplay()">Test Dashboard Display</button>
+            <div id="dashboardTest"></div>
+        </div>
+        
+        <div class="step">
+            <h3>Step 5: Clean Database (Admin Only)</h3>
+            <button class="btn btn-danger" onclick="cleanDatabase()">Clean Database Duplicates</button>
+            <div id="cleanResult"></div>
+        </div>
+        
+        <div class="step">
+            <h3>Complete Debug Log</h3>
+            <div id="debugLog" class="data-display">Debug log will appear here...</div>
+            <button class="btn" onclick="clearLog()">Clear Log</button>
+        </div>
+    </div>
+
+    <script>
+        let debugData = {
+            session: null,
+            rawData: null,
+            duplicates: null,
+            dashboardTest: null
+        };
+
+        function log(message) {
+            const logDiv = document.getElementById('debugLog');
+            const timestamp = new Date().toLocaleTimeString();
+            logDiv.textContent += `[${timestamp}] ${message}\n`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+            console.log(message);
+        }
+
+        function checkSession() {
+            log('🔍 Checking session...');
+            fetch('/api/session', { credentials: 'include' })
+                .then(res => {
+                    if (!res.ok) {
+                        throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+                    }
+                    return res.json();
+                })
+                .then(data => {
+                    debugData.session = data;
+                    log(`✅ Session data: ${JSON.stringify(data, null, 2)}`);
+                    
+                    const sessionDiv = document.getElementById('sessionResult');
+                    if (data.loggedIn && data.user) {
+                        sessionDiv.innerHTML = 
+                            `<div class="success">Logged in: ${data.loggedIn}, User: ${data.user?.name}, Role: ${data.user?.role}</div>`;
+                    } else {
+                        sessionDiv.innerHTML = 
+                            `<div class="error">Not logged in. Please login first.</div>`;
+                        log('⚠️ User not logged in. Some features may not work.');
+                    }
+                })
+                .catch(error => {
+                    log(`❌ Session error: ${error.message}`);
+                    document.getElementById('sessionResult').innerHTML = 
+                        `<div class="error">Error: ${error.message}</div>`;
+                });
+        }
+
+        function fetchRawData() {
+            log('🔍 Fetching raw data from API...');
+            fetch('/api/my-uploads', { credentials: 'include' })
+                .then(res => {
+                    if (!res.ok) {
+                        if (res.status === 401) {
+                            throw new Error('Not authenticated - please login first');
+                        }
+                        throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+                    }
+                    return res.json();
+                })
+                .then(data => {
+                    debugData.rawData = data;
+                    log(`✅ Raw API data received: ${data ? data.length : 0} items`);
+                    if (data && data.length > 0) {
+                        log(`📊 First few items: ${JSON.stringify(data.slice(0, 3), null, 2)}`);
+                    }
+                    document.getElementById('rawDataResult').innerHTML = 
+                        `<div class="success">Received ${data ? data.length : 0} items from API</div>`;
+                })
+                .catch(error => {
+                    log(`❌ API error: ${error.message}`);
+                    document.getElementById('rawDataResult').innerHTML = 
+                        `<div class="error">Error: ${error.message}</div>`;
+                });
+        }
+
+        function analyzeDuplicates() {
+            if (!debugData.rawData) {
+                log('❌ No raw data to analyze. Please fetch raw data first.');
+                document.getElementById('duplicateAnalysis').innerHTML = 
+                    `<div class="error">Please fetch raw data first</div>`;
+                return;
+            }
+
+            log('🔍 Analyzing duplicates...');
+            const filenameGroups = {};
+            const duplicates = [];
+            
+            debugData.rawData.forEach((item, index) => {
+                const filename = item.filename;
+                if (!filenameGroups[filename]) {
+                    filenameGroups[filename] = [];
+                }
+                filenameGroups[filename].push({ ...item, index });
+            });
+
+            Object.keys(filenameGroups).forEach(filename => {
+                const items = filenameGroups[filename];
+                if (items.length > 1) {
+                    duplicates.push({
+                        filename: filename,
+                        count: items.length,
+                        items: items
+                    });
+                }
+            });
+
+            debugData.duplicates = duplicates;
+            
+            log(`📊 Duplicate analysis complete:`);
+            log(`   Total items: ${debugData.rawData.length}`);
+            log(`   Unique filenames: ${Object.keys(filenameGroups).length}`);
+            log(`   Duplicates found: ${duplicates.length}`);
+            
+            if (duplicates.length > 0) {
+                log(`🔴 Duplicate details:`);
+                duplicates.forEach(dup => {
+                    log(`   - ${dup.filename}: ${dup.count} occurrences`);
+                });
+            }
+
+            document.getElementById('duplicateAnalysis').innerHTML = 
+                `<div class="${duplicates.length > 0 ? 'error' : 'success'}">
+                    Found ${duplicates.length} duplicate groups. Total items: ${debugData.rawData.length}
+                </div>`;
+        }
+
+        function testDashboardDisplay() {
+            if (!debugData.rawData) {
+                log('❌ No raw data to test. Please fetch raw data first.');
+                document.getElementById('dashboardTest').innerHTML = 
+                    `<div class="error">Please fetch raw data first</div>`;
+                return;
+            }
+
+            log('🔍 Testing dashboard display logic...');
+            
+            // Simulate dashboard deduplication
+            const uniqueData = [];
+            const seenFilenames = new Set();
+            const clientDuplicates = [];
+            
+            debugData.rawData.forEach((item, index) => {
+                if (!item.filename) {
+                    uniqueData.push(item);
+                    return;
+                }
+                
+                if (!seenFilenames.has(item.filename)) {
+                    seenFilenames.add(item.filename);
+                    uniqueData.push(item);
+                } else {
+                    clientDuplicates.push({ ...item, index });
+                }
+            });
+
+            log(`📊 Dashboard display test results:`);
+            log(`   Original items: ${debugData.rawData.length}`);
+            log(`   Unique after deduplication: ${uniqueData.length}`);
+            log(`   Client-side duplicates removed: ${clientDuplicates.length}`);
+            
+            if (clientDuplicates.length > 0) {
+                log(`🔴 Client-side duplicate details:`);
+                clientDuplicates.forEach(dup => {
+                    log(`   - ${dup.filename} (index: ${dup.index})`);
+                });
+            }
+
+            debugData.dashboardTest = {
+                original: debugData.rawData.length,
+                unique: uniqueData.length,
+                duplicates: clientDuplicates.length
+            };
+
+            document.getElementById('dashboardTest').innerHTML = 
+                `<div class="${clientDuplicates.length > 0 ? 'error' : 'success'}">
+                    Dashboard would display ${uniqueData.length} items (removed ${clientDuplicates.length} duplicates)
+                </div>`;
+        }
+
+        function cleanDatabase() {
+            if (!debugData.session || debugData.session.user?.role !== 'admin') {
+                log('❌ Admin access required for database cleanup');
+                document.getElementById('cleanResult').innerHTML = 
+                    `<div class="error">Admin access required</div>`;
+                return;
+            }
+
+            log('🧹 Cleaning database duplicates...');
+            fetch('/api/clean-duplicates', {
+                method: 'DELETE',
+                credentials: 'include'
+            })
+                .then(res => res.json())
+                .then(data => {
+                    log(`✅ Database cleanup complete: ${JSON.stringify(data, null, 2)}`);
+                    document.getElementById('cleanResult').innerHTML = 
+                        `<div class="success">${data.message}</div>`;
+                })
+                .catch(error => {
+                    log(`❌ Cleanup error: ${error.message}`);
+                    document.getElementById('cleanResult').innerHTML = 
+                        `<div class="error">Error: ${error.message}</div>`;
+                });
+        }
+
+        function goToLogin() {
+            log('🔐 Navigating to login page...');
+            window.location.href = '/login.html';
+        }
+
+        function goToDashboard() {
+            log('📊 Navigating to dashboard...');
+            window.location.href = '/dashboard.html';
+        }
+
+        function clearLog() {
+            document.getElementById('debugLog').textContent = 'Debug log cleared...\n';
+        }
+
+        // Auto-run session check on page load
+        window.addEventListener('load', () => {
+            log('🚀 Debug page loaded');
+            checkSession();
+        });
+    </script>
+</body>
+</html>
