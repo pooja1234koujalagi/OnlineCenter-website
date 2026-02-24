@@ -1,0 +1,197 @@
+{
+  "users": [
+    {
+      "name": "Admin",
+      "email": "admin@gmail.com",
+      "password": "admin123",
+      "role": "admin"
+    },
+    {
+      "name": "pooja",
+      "email": "poo@gmail.com",
+      "password": "123456",
+      "role": "customer"
+    },
+    {
+      "name": "pooja",
+      "email": "po@gmail.com",
+      "password": "123456",
+      "role": "customer"
+    },
+    {
+      "name": "shivani",
+      "email": "shivani@gmail.com",
+      "password": "shivani123",
+      "role": "customer"
+    },
+    {
+      "name": "rashmi",
+      "email": "rashmi@gmail.com",
+      "password": "rashmi123",
+      "role": "customer"
+    },
+    {
+      "name": "Raju",
+      "email": "raju@gmail.com",
+      "password": "raju123",
+      "role": "customer"
+    },
+    {
+      "name": "kaveri",
+      "email": "kaveri@gmail.com",
+      "password": "kaveri123",
+      "role": "customer"
+    },
+    {
+      "name": "pooja",
+      "email": "pooja@gmail.com",
+      "password": "123456",
+      "role": "customer"
+    },
+    {
+      "name": "poo",
+      "email": "poogmail.com",
+      "password": "654321",
+      "mobile": "7892125820",
+      "role": "customer"
+    },
+    {
+      "name": "ray",
+      "email": "r@gmail.com",
+      "password": "ray123",
+      "mobile": "7892125820",
+      "role": "customer"
+    },
+    {
+      "name": "ray",
+      "email": "ray@gmail.com",
+      "password": "ray123",
+      "mobile": null,
+      "role": "customer"
+    },
+    {
+      "name": "rayy",
+      "email": "rayy@gmail.com",
+      "password": "rayy123",
+      "mobile": null,
+      "role": "customer"
+    },
+    {
+      "name": "sahana",
+      "email": "sahana@gmail.com",
+      "password": "sahana123",
+      "mobile": null,
+      "role": "customer"
+    },
+    {
+      "name": "sonu",
+      "email": "sonu@gmail.com",
+      "password": "sonu123",
+      "mobile": null,
+      "role": "customer"
+    },
+    {
+      "name": "karti",
+      "email": "karti@gmail.com",
+      "password": "karti123",
+      "mobile": null,
+      "role": "customer"
+    },
+    {
+      "name": "japu",
+      "email": "japu@gmail.com",
+      "password": "japu123",
+      "mobile": null,
+      "role": "customer"
+    }
+  ],
+  "uploads": [
+    {
+      "user": "pooja",
+      "filename": "1770967641706-Screenshot 2026-02-05 053401.png",
+      "originalname": "Screenshot 2026-02-05 053401.png",
+      "uploadedAt": "2026-02-13T07:27:21.709Z",
+      "extraData": "my docs"
+    },
+    {
+      "user": "shivani",
+      "filename": "1770971970022-Screenshot 2026-02-11 171457.png",
+      "originalname": "Screenshot 2026-02-11 171457.png",
+      "uploadedAt": "2026-02-13T08:39:30.032Z",
+      "extraData": "adhar card"
+    },
+    {
+      "user": "rashmi",
+      "filename": "1770972408301-Screenshot 2026-02-05 052019.png",
+      "originalname": "Screenshot 2026-02-05 052019.png",
+      "uploadedAt": "2026-02-13T08:46:48.304Z",
+      "extraData": "my photo"
+    },
+    {
+      "user": "Raju",
+      "filename": "1770974033832-Screenshot 2026-02-13 043015.png",
+      "originalname": "Screenshot 2026-02-13 043015.png",
+      "uploadedAt": "2026-02-13T09:13:53.848Z",
+      "extraData": "screenshot"
+    },
+    {
+      "user": "kaveri",
+      "filename": "1770975598727-Screenshot 2026-02-05 052019.png",
+      "originalname": "Screenshot 2026-02-05 052019.png",
+      "uploadedAt": "2026-02-13T09:39:58.737Z",
+      "extraData": "application form"
+    },
+    {
+      "user": "pooja",
+      "userEmail": "pooja@gmail.com",
+      "filename": "1770977335075-Screenshot 2026-02-05 051919.png",
+      "originalname": "Screenshot 2026-02-05 051919.png",
+      "uploadedAt": "2026-02-13T10:08:55.085Z",
+      "extraData": "my photo"
+    },
+    {
+      "user": "ray",
+      "userEmail": "ray@gmail.com",
+      "filename": "1770980458037-Screenshot 2026-02-13 091627.png",
+      "originalname": "Screenshot 2026-02-13 091627.png",
+      "uploadedAt": "2026-02-13T11:00:58.046Z",
+      "extraData": "my docs"
+    },
+    {
+      "user": "rayy",
+      "userEmail": "rayy@gmail.com",
+      "filename": "1770981984090-Screenshot (2).png",
+      "originalname": "Screenshot (2).png",
+      "uploadedAt": "2026-02-13T11:26:24.111Z",
+      "extraData": "my adhar"
+    },
+    {
+      "user": "sahana",
+      "userEmail": "sahana@gmail.com",
+      "filename": "1770999032368-welcomepage.png",
+      "originalname": "welcomepage.png",
+      "uploadedAt": "2026-02-13T16:10:32.387Z",
+      "extraData": "upload page"
+    },
+    {
+      "user": "sonu",
+      "userEmail": "sonu@gmail.com",
+      "filename": "1771001952857-Screenshot 2026-02-12 124255.png",
+      "originalname": "Screenshot 2026-02-12 124255.png",
+      "uploadedAt": "2026-02-13T16:59:12.866Z",
+      "extraData": "hi"
+    },
+    {
+      "user": "karti",
+      "userEmail": "karti@gmail.com",
+      "filename": "1771058705097-Screenshot (2).png",
+      "originalname": "Screenshot (2).png",
+      "uploadedAt": "2026-02-14T08:45:05.110Z",
+      "extraData": ""
+    }
+  ],
+  "applicationInfo": {
+    "callForms": "post office",
+    "requiredDocuments": "adhar card\nmarks card\npan card\ncast certificate\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+  }
+}

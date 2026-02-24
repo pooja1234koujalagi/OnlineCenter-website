@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Double Upload Fix Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .btn {
+            background: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .btn:hover {
+            background: #0056b3;
+        }
+        .data-display {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .success {
+            color: #155724;
+            background: #d4edda;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .error {
+            color: #721c24;
+            background: #f8d7da;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .warning {
+            color: #856404;
+            background: #fff3cd;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Double Upload Fix Test</h1>
+        <p>This tool will help us identify and fix the double upload issue permanently.</p>
+        
+        <div class="step">
+            <h3>Step 1: Check Session</h3>
+            <button class="btn" onclick="checkSession()">Check Session</button>
+            <div id="sessionResult"></div>
+        </div>
+        
+        <div class="step">
+            <h3>Step 2: Test Multiple API Calls</h3>
+            <button class="btn" onclick="testMultipleCalls()">Test 3 API Calls</button>
+            <div id="multipleCallResult"></div>
+        </div>
+        
+        <div class="step">
+            <h3>Step 3: Analyze Data Consistency</h3>
+            <button class="btn" onclick="analyzeConsistency()">Analyze Consistency</button>
+            <div id="consistencyResult"></div>
+        </div>
+        
+        <div class="step">
+            <h3>Step 4: Force Clean Database</h3>
+            <button class="btn" onclick="forceCleanDatabase()">Force Clean Database</button>
+            <div id="cleanResult"></div>
+        </div>
+        
+        <div class="step">
+            <h3>Complete Debug Log</h3>
+            <div id="debugLog" class="data-display">Debug log will appear here...</div>
+            <button class="btn" onclick="clearLog()">Clear Log</button>
+        </div>
+    </div>
+
+    <script>
+        let debugData = {
+            session: null,
+            apiCalls: [],
+            consistency: null
+        };
+
+        function log(message) {
+            const logDiv = document.getElementById('debugLog');
+            const timestamp = new Date().toLocaleTimeString();
+            logDiv.textContent += `[${timestamp}] ${message}\n`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+            console.log(message);
+        }
+
+        function checkSession() {
+            log('🔍 Checking session...');
+            fetch('/api/session', { credentials: 'include' })
+                .then(res => res.json())
+                .then(data => {
+                    debugData.session = data;
+                    log(`✅ Session: ${JSON.stringify(data, null, 2)}`);
+                    document.getElementById('sessionResult').innerHTML = 
+                        `<div class="success">Logged in: ${data.loggedIn}, User: ${data.user?.name}, Role: ${data.user?.role}</div>`;
+                })
+                .catch(error => {
+                    log(`❌ Session error: ${error.message}`);
+                    document.getElementById('sessionResult').innerHTML = 
+                        `<div class="error">Error: ${error.message}</div>`;
+                });
+        }
+
+        function testMultipleCalls() {
+            log('🔍 Testing multiple API calls...');
+            document.getElementById('multipleCallResult').innerHTML = '<div class="warning">Making 3 simultaneous API calls...</div>';
+            
+            const promises = [];
+            debugData.apiCalls = [];
+            
+            for (let i = 1; i <= 3; i++) {
+                promises.push(
+                    fetch('/api/my-uploads', { credentials: 'include' })
+                        .then(res => res.json())
+                        .then(data => {
+                            const callData = {
+                                callNumber: i,
+                                timestamp: new Date().toISOString(),
+                                count: data ? data.length : 0,
+                                data: data
+                            };
+                            debugData.apiCalls.push(callData);
+                            log(`✅ Call ${i}: Received ${data ? data.length : 0} items`);
+                            return callData;
+                        })
+                        .catch(error => {
+                            log(`❌ Call ${i} error: ${error.message}`);
+                            return null;
+                        })
+                );
+            }
+            
+            Promise.all(promises).then(results => {
+                log(`📊 All ${results.length} calls completed`);
+                
+                // Check consistency
+                const counts = results.filter(r => r).map(r => r.count);
+                const uniqueCounts = [...new Set(counts)];
+                
+                if (uniqueCounts.length === 1) {
+                    document.getElementById('multipleCallResult').innerHTML = 
+                        `<div class="success">✅ All calls returned same count: ${uniqueCounts[0]}</div>`;
+                } else {
+                    document.getElementById('multipleCallResult').innerHTML = 
+                        `<div class="error">❌ Inconsistent counts: ${uniqueCounts.join(', ')}</div>`;
+                }
+                
+                log(`📈 Call counts: ${counts.join(', ')}`);
+                log(`🎯 Unique counts: ${uniqueCounts.join(', ')}`);
+            });
+        }
+
+        function analyzeConsistency() {
+            if (debugData.apiCalls.length === 0) {
+                log('❌ No API call data. Please run Step 2 first.');
+                document.getElementById('consistencyResult').innerHTML = 
+                    `<div class="error">Please run Step 2 first</div>`;
+                return;
+            }
+
+            log('🔍 Analyzing data consistency...');
+            
+            const allData = debugData.apiCalls.flatMap(call => call.data || []);
+            const filenameGroups = {};
+            const duplicates = [];
+            
+            allData.forEach((item, index) => {
+                const filename = item.filename;
+                if (!filenameGroups[filename]) {
+                    filenameGroups[filename] = [];
+                }
+                filenameGroups[filename].push({ ...item, index });
+            });
+
+            Object.keys(filenameGroups).forEach(filename => {
+                const items = filenameGroups[filename];
+                if (items.length > 1) {
+                    duplicates.push({
+                        filename: filename,
+                        count: items.length,
+                        items: items
+                    });
+                }
+            });
+
+            log(`📊 Consistency Analysis:`);
+            log(`   Total API calls: ${debugData.apiCalls.length}`);
+            log(`   Total items across all calls: ${allData.length}`);
+            log(`   Unique filenames: ${Object.keys(filenameGroups).length}`);
+            log(`   Duplicate groups found: ${duplicates.length}`);
+            
+            if (duplicates.length > 0) {
+                log(`🔴 Duplicate details:`);
+                duplicates.forEach(dup => {
+                    log(`   - ${dup.filename}: ${dup.count} occurrences`);
+                });
+            }
+
+            const resultHtml = duplicates.length > 0 
+                ? `<div class="error">Found ${duplicates.length} duplicate groups in API responses</div>`
+                : `<div class="success">No duplicates found in API responses</div>`;
+            
+            document.getElementById('consistencyResult').innerHTML = resultHtml;
+        }
+
+        function forceCleanDatabase() {
+            if (!debugData.session || debugData.session.user?.role !== 'admin') {
+                log('❌ Admin access required for database cleanup');
+                document.getElementById('cleanResult').innerHTML = 
+                    `<div class="error">Admin access required</div>`;
+                return;
+            }
+
+            log('🧹 Force cleaning database duplicates...');
+            fetch('/api/clean-duplicates', {
+                method: 'DELETE',
+                credentials: 'include'
+            })
+                .then(res => res.json())
+                .then(data => {
+                    log(`✅ Database cleanup: ${JSON.stringify(data, null, 2)}`);
+                    document.getElementById('cleanResult').innerHTML = 
+                        `<div class="success">${data.message}</div>`;
+                })
+                .catch(error => {
+                    log(`❌ Cleanup error: ${error.message}`);
+                    document.getElementById('cleanResult').innerHTML = 
+                        `<div class="error">Error: ${error.message}</div>`;
+                });
+        }
+
+        function clearLog() {
+            document.getElementById('debugLog').textContent = 'Debug log cleared...\n';
+        }
+
+        // Auto-run session check on page load
+        window.addEventListener('load', () => {
+            log('🚀 Double Upload Fix Test loaded');
+            checkSession();
+        });
+    </script>
+</body>
+</html>
