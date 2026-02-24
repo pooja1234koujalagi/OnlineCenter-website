@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Janani Enterprise Online Center - Modern UI</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Modern UI Enhancements */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* Services Section */
+        .services-section {
+            padding: 60px 20px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            margin: 40px 0;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .service-card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .service-card.animate {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .service-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .service-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .service-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .service-card p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            color: #333;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 2px;
+        }
+
+        /* Contact Section */
+        .contact-section {
+            padding: 40px 20px;
+            background: white;
+            text-align: center;
+        }
+
+        .contact-info {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .phone-icon {
+            font-size: 2rem;
+            color: #28a745;
+        }
+
+        .phone-number {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        /* Loading Message */
+        .loading-message {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #28a745;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            display: none;
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Password Eye Icons */
+        .password-container {
+            position: relative;
+        }
+
+        .password-container input {
+            padding-right: 40px;
+        }
+
+        .password-eye {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            font-size: 18px;
+            color: #666;
+            user-select: none;
+        }
+
+        .password-eye:hover {
+            color: #333;
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            .navbar .container {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+                padding: 10px 15px;
+            }
+
+            .navbar-nav {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+
+            .hero .hero-content {
+                text-align: center;
+            }
+
+            .button-group {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .button-group a {
+                width: 100%;
+            }
+
+            footer .container {
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+            }
+
+            #userDisplay {
+                font-size: 16px;
+            }
+        }
+
+        /* Modal adjustments for mobile */
+        @media (max-width: 500px) {
+            .modal-content {
+                width: 95%;
+                margin: 60px auto;
+                padding: 15px;
+            }
+
+            .modal-body p {
+                font-size: 14px;
+            }
+
+            #docList ul li {
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-brand">
+                <h1>🛍️ Janani Enterprise</h1>
+            </div>
+            <button class="mobile-menu-toggle" id="mobileMenuToggle">
+                <div class="hamburger"></div>
+            </button>
+            <div class="navbar-nav">
+                <span id="userDisplay" style="color: #333; font-weight: 600; display: none; margin-right: 15px;"></span>
+                <div class="profile-icon" id="profileIcon" style="display: none;">👤</div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h2>Welcome to Janani Enterprise OnlineCenter</h2>
+                <p>Your trusted online shopping destination</p>
+                <div class="button-group" id="authButtons">
+                    <a href="login.html" class="btn btn-login">Login</a>
+                    <a href="register.html" class="btn btn-secondary">Register</a>
+                </div>
+                <div class="button-group" id="uploadButtons" style="display: none;">
+                    <a href="upload.html" class="btn btn-primary">Upload Documents</a>
+                    <a href="dashboard.html" class="btn btn-secondary">View Dashboard</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Services Section -->
+    <section class="services-section" id="services">
+        <div class="container">
+            <h2 class="section-title">Our Services</h2>
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon">📋</div>
+                    <h3>Government Form Assistance</h3>
+                    <p>PAN, Aadhar, Voter ID, Passport applications and form filling support</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">🎓</div>
+                    <h3>Educational Applications</h3>
+                    <p>Admissions, scholarships, exam applications and educational document services</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">💼</div>
+                    <h3>Job & Recruitment Applications</h3>
+                    <p>Government and private job applications, resume building, and career guidance</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">🌐</div>
+                    <h3>Online Portal Support</h3>
+                    <p>Form filling, document uploads, status checking, and portal navigation</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">📄</div>
+                    <h3>Digital Document Services</h3>
+                    <p>Document scanning, PDF creation, formatting, and digital conversion</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">🤝</div>
+                    <h3>Consultation & Guidance</h3>
+                    <p>Step-by-step help, deadline management, and expert consultation services</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact-section" id="contact">
+        <div class="container">
+            <h2 class="section-title">Contact Us</h2>
+            <div class="contact-info">
+                <div class="phone-icon">📱</div>
+                <div class="phone-number">+91 81471 93304</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Loading Message -->
+    <div id="loadingMessage" class="loading-message">Uploading...</div>
+
+    <footer class="footer">
+        <div class="container" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+            <p style="margin: 0;">&copy; 2026 Janani Enterprise. All rights reserved.</p>
+            <button id="logoutBtn" class="btn btn-logout" style="margin: 0; padding: 8px 20px; display: none;">Logout</button>
+        </div>
+    </footer>
+
+    <!-- Profile Modal -->
+    <div id="profileModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>My Profile</h2>
+                <button id="closeModalBtn" class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Name:</strong> <span id="profileName"></span></p>
+                <p><strong>Email:</strong> <span id="profileEmail"></span></p>
+                <p><strong>Account Type:</strong> <span id="profileRole"></span></p>
+                <hr style="margin:12px 0;">
+                <h3 style="margin-top:8px;">My Documents</h3>
+                <div id="docList">
+                    <p style="color:#666;">Loading...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- External JS (CSP Safe) -->
+    <script src="/js/home.js"></script>
+    <script src="mobile-menu.js"></script>
+
+</body>
+</html>
